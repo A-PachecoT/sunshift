@@ -1,0 +1,10 @@
+[Unit]
+Description=Automatic color temperature adjustment
+After=graphical-session.target
+
+[Service]
+Type=oneshot
+ExecStart=/home/andre/.config/hypr/scripts/smooth-temperature.sh
+
+[Install]
+WantedBy=default.target 

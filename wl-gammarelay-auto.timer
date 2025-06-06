@@ -1,0 +1,10 @@
+[Unit]
+Description=Run color temperature adjustment every 5 minutes
+Requires=wl-gammarelay-auto.service
+
+[Timer]
+OnBootSec=30s
+OnUnitActiveSec=5m
+
+[Install]
+WantedBy=timers.target 
