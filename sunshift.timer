@@ -1,0 +1,10 @@
+[Unit]
+Description=Run Sunshift adjustments every 5 minutes
+Requires=sunshift.service
+
+[Timer]
+OnBootSec=30s
+OnUnitActiveSec=5m
+
+[Install]
+WantedBy=timers.target 

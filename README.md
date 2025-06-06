@@ -1,4 +1,4 @@
-# wl-gammarelay Auto Color Temperature & Brightness System
+# Sunshift
 
 Automatic color temperature and brightness adjustment for Wayland compositors using wl-gammarelay. Provides time-based blue light filtering and brightness control with smooth transitions.
 
@@ -16,7 +16,7 @@ Automatic color temperature and brightness adjustment for Wayland compositors us
 ./setup.sh
 ```
 
-This installs wl-gammarelay, configures scripts, and enables automatic adjustments.
+This installs wl-gammarelay, configures Sunshift scripts, and enables automatic adjustments.
 
 ## ⌨️ Keyboard Shortcuts
 
@@ -76,9 +76,9 @@ busctl --user get-property rs.wl-gammarelay / rs.wl.gammarelay Brightness
 busctl --user set-property rs.wl-gammarelay / rs.wl.gammarelay Temperature q 4000
 busctl --user set-property rs.wl-gammarelay / rs.wl.gammarelay Brightness d 0.8
 
-# Monitor system
-systemctl --user status wl-gammarelay-auto.timer
-journalctl --user -u wl-gammarelay-auto.service -f
+# Monitor Sunshift
+systemctl --user status sunshift.timer
+journalctl --user -u sunshift.service -f
 ```
 
 ## 📊 Reference

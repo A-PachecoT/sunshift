@@ -1,7 +1,7 @@
 #!/bin/bash
 
-# wl-gammarelay Auto Color Temperature System - Setup Script
-# This script installs and configures automatic color temperature adjustment
+# Sunshift - Setup Script
+# Automatic color temperature and brightness adjustment for Wayland
 
 set -e  # Exit on error
 
@@ -37,7 +37,7 @@ if ! command -v yay &> /dev/null; then
     exit 1
 fi
 
-print_info "Starting wl-gammarelay auto color temperature system installation..."
+print_info "Starting Sunshift installation..."
 
 # Install dependencies
 print_info "Installing dependencies..."
@@ -65,21 +65,21 @@ mkdir -p ~/.config/systemd/user
 
 # Copy scripts
 print_info "Installing scripts..."
-cp {temp-up.sh,temp-down.sh,auto-temperature.sh,smooth-temperature.sh} ~/.config/hypr/scripts/
-chmod +x ~/.config/hypr/scripts/{temp-up.sh,temp-down.sh,auto-temperature.sh,smooth-temperature.sh}
+cp {temp-up.sh,temp-down.sh,brightness-up.sh,brightness-down.sh,auto-temperature.sh,auto-brightness.sh,smooth-temperature.sh} ~/.config/hypr/scripts/
+chmod +x ~/.config/hypr/scripts/{temp-up.sh,temp-down.sh,brightness-up.sh,brightness-down.sh,auto-temperature.sh,auto-brightness.sh,smooth-temperature.sh}
 
 # Update systemd service file with correct path
 print_info "Installing systemd services..."
-sed "s|/home/andre|$HOME|g" wl-gammarelay-auto.service > ~/.config/systemd/user/wl-gammarelay-auto.service
-cp wl-gammarelay-auto.timer ~/.config/systemd/user/
+sed "s|/home/andre|$HOME|g" sunshift.service > ~/.config/systemd/user/sunshift.service
+cp sunshift.timer ~/.config/systemd/user/
 
 # Reload systemd
 print_info "Configuring systemd..."
 systemctl --user daemon-reload
 
 # Enable and start the timer
-systemctl --user enable wl-gammarelay-auto.timer
-systemctl --user start wl-gammarelay-auto.timer
+systemctl --user enable sunshift.timer
+systemctl --user start sunshift.timer
 
 # Check if wl-gammarelay is running
 if ! pgrep -x wl-gammarelay > /dev/null; then
@@ -96,17 +96,20 @@ print_info "Installation complete!"
 echo
 print_warning "Please add the following to your Hyprland configuration:"
 echo
-echo "# Auto-start wl-gammarelay"
+echo "# Auto-start Sunshift"
 echo "exec-once = wl-gammarelay"
 echo "exec-once = sleep 2 && \$HOME/.config/hypr/scripts/smooth-temperature.sh"
 echo
 echo "# Keyboard shortcuts for manual adjustment"
-echo "bind = \$mainMod, Prior, exec, \$HOME/.config/hypr/scripts/temp-up.sh   # Super+PageUp"
-echo "bind = \$mainMod, Next, exec, \$HOME/.config/hypr/scripts/temp-down.sh  # Super+PageDown"
+echo "bind = \$mainMod, Prior, exec, \$HOME/.config/hypr/scripts/temp-up.sh        # Super+PageUp"
+echo "bind = \$mainMod, Next, exec, \$HOME/.config/hypr/scripts/temp-down.sh      # Super+PageDown"
+echo "bind = \$mainMod ALT, Prior, exec, \$HOME/.config/hypr/scripts/brightness-up.sh   # Alt+Super+PageUp"
+echo "bind = \$mainMod ALT, Next, exec, \$HOME/.config/hypr/scripts/brightness-down.sh  # Alt+Super+PageDown"
 echo
-print_info "You can customize the temperature settings by editing:"
+print_info "You can customize Sunshift settings by editing:"
 echo "  - ~/.config/hypr/scripts/smooth-temperature.sh (for smooth transitions)"
 echo "  - ~/.config/hypr/scripts/auto-temperature.sh (for simple schedule)"
+echo "  - ~/.config/hypr/scripts/auto-brightness.sh (for brightness schedule)"
 echo
 print_info "Current status:"
-systemctl --user status wl-gammarelay-auto.timer --no-pager || true 
+systemctl --user status sunshift.timer --no-pager || true 

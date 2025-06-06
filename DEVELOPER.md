@@ -1,4 +1,4 @@
-# Developer Guide - wl-gammarelay Auto System
+# Developer Guide - Sunshift
 
 Technical documentation for developers and advanced users.
 
@@ -83,8 +83,8 @@ makepkg -si
 sudo pacman -S bc
 
 # 3. Clone this repository
-git clone <repository-url> ~/projects/wl-gammarelay-auto
-cd ~/projects/wl-gammarelay-auto
+git clone <repository-url> ~/projects/sunshift
+cd ~/projects/sunshift
 
 # 4. Run setup script
 ./setup.sh
@@ -281,7 +281,7 @@ systemctl --user restart dbus
 busctl --user set-property rs.wl-gammarelay / rs.wl.gammarelay Temperature q 4000
 
 # Check for errors
-journalctl --user -u wl-gammarelay-auto.service -n 50
+journalctl --user -u sunshift.service -n 50
 
 # Verify calculations
 bash -x ~/.config/hypr/scripts/smooth-temperature.sh
@@ -311,13 +311,13 @@ set -e  # Exit on error
 
 ```bash
 # Systemd service logs
-journalctl --user -u wl-gammarelay-auto.service -f
+journalctl --user -u sunshift.service -f
 
 # Timer status
-systemctl --user status wl-gammarelay-auto.timer
+systemctl --user status sunshift.timer
 
 # All related logs
-journalctl --user -t wl-gammarelay -t smooth-temperature
+journalctl --user -t sunshift -t smooth-temperature
 ```
 
 ## Contributing
@@ -370,4 +370,5 @@ busctl --user introspect rs.wl-gammarelay /
 - [[README.md]] - User documentation
 - [wl-gammarelay](https://github.com/jeremija/wl-gammarelay) - Upstream project
 - [wlsunset](https://sr.ht/~kennylevinsen/wlsunset/) - Alternative (no brightness)
-- [gammastep](https://gitlab.com/chinstrap/gammastep) - Alternative (GAMMA_LUT issues) 
+- [gammastep](https://gitlab.com/chinstrap/gammastep) - Alternative (GAMMA_LUT issues)
+- [f.lux](https://justgetflux.com/) - Inspiration for Sunshift 

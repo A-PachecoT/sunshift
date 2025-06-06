@@ -1,5 +1,5 @@
 [Unit]
-Description=Automatic color temperature adjustment
+Description=Sunshift - Automatic color temperature and brightness adjustment
 After=graphical-session.target
 
 [Service]
