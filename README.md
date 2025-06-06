@@ -1,145 +1,250 @@
-# Hyprland Utility Scripts
+# wl-gammarelay Auto Color Temperature & Brightness System
 
-Clean, essential scripts for Hyprland with **clipse** - a reliable clipboard manager.
+Automatic color temperature and brightness adjustment for Wayland compositors using wl-gammarelay. Provides time-based blue light filtering and brightness control with smooth transitions and manual controls.
 
-## 📋 Clipboard & Portal Scripts
+## Features
 
-### `clipboard-restart.sh`
-**Clipse clipboard restart** - Simple and reliable clipboard service restart
-- Stops any existing clipse processes
-- Clears cache if needed
-- Ensures desktop portals are running
-- Restarts clipse in listening mode
-- Tests clipboard functionality
-- Bound to `Super+Alt+V` keybinding
+- 🌅 **Automatic time-based adjustment** - Changes color temperature and brightness based on time of day
+- 🌊 **Smooth transitions** - Gradual changes during sunrise/sunset periods
+- 💡 **Brightness control** - Manage monitor brightness alongside color temperature
+- ⌨️ **Manual controls** - Keyboard shortcuts for instant adjustments
+- 🔧 **Fully customizable** - Easy to modify times, temperatures, and brightness levels
+- 🖥️ **NVIDIA-compatible** - Works with NVIDIA GPUs on Wayland (unlike gammastep/wlsunset)
 
-### `fix-clipboard-complete.sh`
-**Legacy clipboard fix** - For emergency clipboard fixes
-- Kills all conflicting clipboard processes
-- Ensures desktop portals are running
-- Can be used as fallback if clipse has issues
+## Requirements
 
-### `fix-electron-clipboard-dbus.sh`
-**Electron/DBus crash fix** - Fixes Cursor crashes and clipboard issues with Electron apps
-- Cleans up duplicate portal processes
-- Fixes DBus session conflicts
-- Sets proper Electron environment variables
-- Creates electron-wayland wrapper for stability
-- Bound to `Super+Ctrl+E` keybinding
+- **Arch Linux** (or AUR-compatible distribution)
+- **Wayland compositor** (tested with Hyprland)
+- **yay** (AUR helper)
+- **bc** (basic calculator for smooth transitions)
+- **systemd** (for automatic scheduling)
 
-### `cursor-stability-fix.sh`
-**Cursor IDE stability fixes** - Prevents Cursor crashes on Hyprland
-- Creates cursor-stable wrapper with Wayland fixes
-- Disables problematic GPU features
-- Sets proper memory limits
-- Adds desktop entry and shell aliases
-- Provides tips to prevent crashes
+## Installation
 
-### `cursor-safe-paste.sh`
-**Cursor wrapper with clipboard protection** - Prevents Cursor crashes when pasting
-- Ensures clipse is running before starting Cursor
-- Sets environment variables for stable clipboard operation
-- Monitors clipboard size and warns about large content
-- Includes all stability fixes from cursor-stability-fix.sh
-
-### `test-clipboard.sh`
-**Clipboard diagnostic tool** - Test if clipboard is working properly
-- Tests basic copy/paste
-- Shows service status
-- Checks clipboard functionality
-
-### `autostart-clipboard.sh`
-**Clipboard autostart** - Runs on Hyprland startup (configured in userprefs.conf)
-- Starts clipse in listening mode
-- Simple, reliable clipboard setup
-- No complex monitoring or systemd services
-
-### `restart-portals.sh`
-**Portal restart utility** - Fixes desktop portal issues
-- Restarts xdg-desktop-portal services
-- Required for app integration (Cursor, Obsidian, etc.)
-- Bound to `Super+Ctrl+V` keybinding
-
-### `diagnose-portals.sh`
-**Portal diagnostic tool** - Comprehensive portal and graphics diagnostics
-- Checks portal services
-- Tests clipboard functionality
-- Shows NVIDIA status
-- Provides quick fixes
-
-## 🚀 Other Utilities
-
-### `launch-or-focus-obsidian.sh`
-**Smart Obsidian launcher** - Launch or focus existing Obsidian window
-- If Obsidian is running, switches to its workspace
-- If not running, launches it
-- Prevents duplicate instances
-
-## 🎮 Clipboard Manager - Clipse
-
-**Why clipse instead of cliphist?**
-- Single binary architecture (more reliable)
-- Built-in TUI interface (no rofi dependency)
-- Better Wayland integration
-- Handles both text and images automatically
-- No service crashes or "clipboard not running" issues
-
-### Usage
-```bash
-# Copy text or images normally (Ctrl+C)
-
-# Open clipboard manager
-Super+V  # Opens clipse TUI
-
-# Navigate in clipse
-↑/↓      # Navigate entries
-Enter    # Select and copy
-Delete   # Remove entry
-Ctrl+C   # Exit
-/        # Search
-Tab      # Toggle between text/image view
-```
-
-### Configuration
-- Config: `~/.config/clipse/config.json`
-- Theme: `~/.config/clipse/custom_theme.json`
-- History: `~/.cache/clipse/history.json`
-
-## 🔧 Common Tasks
+Run the setup script:
 
 ```bash
-# Restart clipboard service
-./scripts/clipboard-restart.sh
-# or press: Super+Alt+V
-
-# Fix Electron app crashes (Cursor, Discord, etc.)
-./scripts/fix-electron-clipboard-dbus.sh
-# or press: Super+Ctrl+E
-
-# Make Cursor stable with clipboard protection
-./scripts/cursor-safe-paste.sh
-# or use alias: cursor-safe
-
-# Test clipboard
-./scripts/test-clipboard.sh
-
-# Fix app integration issues (Cursor, Obsidian crashes)
-./scripts/restart-portals.sh
-# or press: Super+Ctrl+V
+./setup.sh
 ```
 
-## 🎹 Keybindings
+This will:
+1. Install wl-gammarelay from AUR
+2. Install bc for calculations
+3. Copy all scripts to `~/.config/hypr/scripts/`
+4. Install and enable systemd timer for automatic adjustments
+5. Show you the configuration to add to your Hyprland config
 
-- `Super+V` - Open clipse clipboard manager
-- `Super+Shift+V` - Open clipse (same as above)
-- `Super+Alt+V` - Restart clipboard service
-- `Super+Ctrl+V` - Restart portals
-- `Super+Ctrl+E` - Fix Electron/DBus issues
+## Manual Installation
 
-## 📝 Notes
+If you prefer to install manually:
 
-- Clipse automatically handles both text and images
-- No need for separate text/image clipboard monitors
-- Window rules make clipse appear as a floating 800x600 centered window
-- Custom dark theme included for better visual integration
-- If clipboard stops working, just press `Super+Alt+V` to restart clipse 
+```bash
+# Install dependencies
+yay -S wl-gammarelay
+sudo pacman -S bc
+
+# Copy scripts
+cp {temp-up.sh,temp-down.sh,brightness-up.sh,brightness-down.sh,auto-temperature.sh,auto-brightness.sh,smooth-temperature.sh} ~/.config/hypr/scripts/
+chmod +x ~/.config/hypr/scripts/*.sh
+
+# Install systemd services
+cp wl-gammarelay-auto.{service,timer} ~/.config/systemd/user/
+systemctl --user daemon-reload
+systemctl --user enable --now wl-gammarelay-auto.timer
+```
+
+## Configuration
+
+### Hyprland Configuration
+
+Add to your `~/.config/hypr/userprefs.conf` or `hyprland.conf`:
+
+```bash
+# Auto-start wl-gammarelay
+exec-once = wl-gammarelay
+exec-once = sleep 2 && $HOME/.config/hypr/scripts/smooth-temperature.sh
+
+# Color temperature controls
+bind = $mainMod, Prior, exec, $HOME/.config/hypr/scripts/temp-up.sh   # Super+PageUp - Cooler
+bind = $mainMod, Next, exec, $HOME/.config/hypr/scripts/temp-down.sh  # Super+PageDown - Warmer
+
+# Brightness controls
+bind = $mainMod ALT, Prior, exec, $HOME/.config/hypr/scripts/brightness-up.sh   # Alt+PageUp - Brighter
+bind = $mainMod ALT, Next, exec, $HOME/.config/hypr/scripts/brightness-down.sh  # Alt+PageDown - Dimmer
+```
+
+### Customizing Color Temperature
+
+#### Simple Schedule (`auto-temperature.sh`)
+
+Edit the variables at the top of the script:
+
+```bash
+# Temperature settings
+DAY_TEMP=6500      # Daytime temperature (6500K = neutral)
+EVENING_TEMP=4500  # Evening temperature (4500K = warm)
+NIGHT_TEMP=3000    # Night temperature (3000K = very warm)
+
+# Time settings (24-hour format)
+DAY_START=8        # Day starts at 8:00 AM
+EVENING_START=18   # Evening starts at 6:00 PM
+NIGHT_START=21     # Night starts at 9:00 PM
+```
+
+#### Smooth Transitions (`smooth-temperature.sh`)
+
+Edit the variables at the top of the script:
+
+```bash
+# Temperature settings
+DAY_TEMP=6500      # Daytime temperature
+NIGHT_TEMP=2500    # Night temperature (lower = stronger blue filter)
+
+# Brightness settings
+DAY_BRIGHTNESS=1.0      # Daytime brightness (100%)
+NIGHT_BRIGHTNESS=0.6    # Night brightness (60%)
+
+# Time settings (decimal hours)
+SUNRISE=6.5        # 6:30 AM (6 hours + 30/60)
+SUNSET=19.5        # 7:30 PM (19 hours + 30/60)
+TRANSITION=1.5     # Transition duration in hours
+```
+
+### Customizing Brightness
+
+#### Simple Schedule (`auto-brightness.sh`)
+
+Edit the variables at the top of the script:
+
+```bash
+# Brightness settings
+DAY_BRIGHTNESS=1.0      # Daytime brightness (100%)
+EVENING_BRIGHTNESS=0.8  # Evening brightness (80%)
+NIGHT_BRIGHTNESS=0.6    # Night brightness (60%)
+
+# Time settings match auto-temperature.sh
+```
+
+#### Manual Adjustment Settings
+
+Edit `brightness-up.sh` and `brightness-down.sh` to change:
+- Brightness step size (default: 10%)
+- Maximum brightness (default: 100%)
+- Minimum brightness (default: 10%)
+
+## Usage
+
+### Automatic Operation
+
+The systemd timer runs every 5 minutes to adjust both temperature and brightness based on time of day.
+
+### Manual Controls
+
+#### Color Temperature
+- **Super + Page Up**: Increase temperature by 500K (cooler/bluer)
+- **Super + Page Down**: Decrease temperature by 500K (warmer/redder)
+
+#### Brightness
+- **Alt + Page Up**: Increase brightness by 10%
+- **Alt + Page Down**: Decrease brightness by 10%
+
+### Direct Commands
+
+```bash
+# Set specific temperature
+busctl --user set-property rs.wl-gammarelay / rs.wl.gammarelay Temperature q 4000
+
+# Set specific brightness (0.0 to 1.0)
+busctl --user set-property rs.wl-gammarelay / rs.wl.gammarelay Brightness d 0.8
+
+# Check current values
+busctl --user get-property rs.wl-gammarelay / rs.wl.gammarelay Temperature
+busctl --user get-property rs.wl-gammarelay / rs.wl.gammarelay Brightness
+
+# Run adjustments manually
+~/.config/hypr/scripts/smooth-temperature.sh
+~/.config/hypr/scripts/auto-brightness.sh
+```
+
+### Monitor the System
+
+```bash
+# Check timer status
+systemctl --user status wl-gammarelay-auto.timer
+
+# View recent adjustments
+journalctl --user -u wl-gammarelay-auto.service -f
+
+# Check if wl-gammarelay is running
+pgrep -a wl-gammarelay
+```
+
+## Reference Guide
+
+### Temperature Scale
+- **6500K**: Neutral daylight (no color adjustment)
+- **5500K**: Slightly warm
+- **4500K**: Warm (good for evening)
+- **3500K**: Very warm (good for late evening)
+- **2500K**: Extremely warm (strong blue filter for night)
+- **2000K**: Maximum warmth (very strong blue filter)
+
+### Brightness Scale
+- **100%** (1.0): Full brightness for daytime work
+- **80%** (0.8): Comfortable for mixed lighting
+- **60%** (0.6): Good for evening/low light
+- **40%** (0.4): Very dim for dark environments
+- **10%** (0.1): Minimum safe brightness
+
+## Troubleshooting
+
+### wl-gammarelay not starting
+```bash
+# Start manually
+wl-gammarelay &
+
+# Check for errors
+journalctl --user -u wl-gammarelay-auto.service
+```
+
+### Temperature or brightness not changing
+```bash
+# Check if daemon is running
+busctl --user introspect rs.wl-gammarelay /
+
+# Restart the daemon
+pkill wl-gammarelay && wl-gammarelay &
+
+# Test manual adjustment
+busctl --user set-property rs.wl-gammarelay / rs.wl.gammarelay Temperature q 5000
+busctl --user set-property rs.wl-gammarelay / rs.wl.gammarelay Brightness d 0.7
+```
+
+### Systemd timer not working
+```bash
+# Check timer status
+systemctl --user list-timers wl-gammarelay-auto.timer
+
+# Restart timer
+systemctl --user restart wl-gammarelay-auto.timer
+```
+
+## Uninstall
+
+```bash
+# Disable systemd timer
+systemctl --user disable --now wl-gammarelay-auto.timer
+
+# Remove systemd files
+rm ~/.config/systemd/user/wl-gammarelay-auto.{service,timer}
+
+# Remove scripts
+rm ~/.config/hypr/scripts/{temp-up.sh,temp-down.sh,brightness-up.sh,brightness-down.sh,auto-temperature.sh,auto-brightness.sh,smooth-temperature.sh}
+
+# Uninstall wl-gammarelay (optional)
+yay -R wl-gammarelay
+```
+
+## License
+
+This project is provided as-is for personal use. 
