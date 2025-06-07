@@ -1,18 +1,19 @@
-import { MantineProvider, AppShell, Title, Text, Container, Tabs, Stack, Group, Badge } from '@mantine/core';
-import { IconSun, IconClock, IconSettings } from '@tabler/icons-react';
+import { MantineProvider, AppShell, Title, Text, Container, Tabs, Stack, Group, Badge, Alert } from '@mantine/core';
+import { IconSun, IconClock, IconSettings, IconAlertCircle } from '@tabler/icons-react';
 import '@mantine/core/styles.css';
 import '@mantine/dates/styles.css';
 import './styles/global.css';
 import { useState } from 'react';
+import { useGammaRelay } from './hooks/useGammaRelay';
 
 function App() {
   const [activeTab, setActiveTab] = useState<string | null>('overview');
-  const [currentTemp, setCurrentTemp] = useState(5500); // Default temperature
+  const { state, error, loading } = useGammaRelay();
   
   // Determine background class based on temperature
   const getBackgroundClass = () => {
-    if (currentTemp <= 3500) return 'night';
-    if (currentTemp >= 5500) return 'cool';
+    if (state.temperature <= 3500) return 'night';
+    if (state.temperature >= 5500) return 'cool';
     return '';
   };
 
@@ -58,15 +59,32 @@ function App() {
                 <IconSun size={28} style={{ color: 'rgba(255, 255, 255, 0.9)' }} />
                 <Title order={2} style={{ color: 'rgba(255, 255, 255, 0.9)' }}>Sunshift</Title>
               </Group>
-              <Badge variant="light" color="orange" size="lg">
-                {currentTemp}K
-              </Badge>
+              <Group>
+                <Badge variant="light" color="orange" size="lg">
+                  {loading ? 'Loading...' : `${state.temperature}K`}
+                </Badge>
+                <Badge variant="light" color="blue" size="lg">
+                  {loading ? '...' : `${Math.round(state.brightness * 100)}%`}
+                </Badge>
+              </Group>
             </Group>
           </Container>
         </AppShell.Header>
 
         <AppShell.Main>
           <Container size="xl">
+            {error && (
+              <Alert 
+                icon={<IconAlertCircle size={16} />} 
+                title="Connection Error" 
+                color="red"
+                mb="md"
+                styles={{ root: { backgroundColor: 'rgba(255, 0, 0, 0.1)' } }}
+              >
+                {error}
+              </Alert>
+            )}
+            
             <div className="glass-card" style={{ padding: '2rem', marginTop: '2rem' }}>
               <Tabs value={activeTab} onChange={setActiveTab}>
                 <Tabs.List>
@@ -84,13 +102,15 @@ function App() {
                 <Tabs.Panel value="overview" pt="xl">
                   <Stack gap="lg">
                     <Text size="xl" fw={500} style={{ color: 'rgba(255, 255, 255, 0.9)' }}>
-                      The sun is up. Light is making your body earlier.
+                      {state.temperature <= 3500 ? 'Night mode active' : 
+                       state.temperature <= 4500 ? 'Evening light' :
+                       'Daylight mode'}
                     </Text>
                     <Text size="sm" style={{ color: 'rgba(255, 255, 255, 0.7)' }}>
-                      Sunrise: 4 hours ago, Wake: 4 hours ago
+                      Color Temperature: {state.temperature}K
                     </Text>
-                    <Text size="sm" style={{ color: 'rgba(255, 255, 255, 0.6)' }}>
-                      Circadian response: 65% (Ready to Work)
+                    <Text size="sm" style={{ color: 'rgba(255, 255, 255, 0.7)' }}>
+                      Screen Brightness: {Math.round(state.brightness * 100)}%
                     </Text>
                   </Stack>
                 </Tabs.Panel>
