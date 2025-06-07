@@ -10,6 +10,8 @@ import { useTrayEvents } from './hooks/useTrayEvents';
 import { TemperatureSlider } from './components/TemperatureSlider';
 import { BrightnessSlider } from './components/BrightnessSlider';
 import { PresetButton } from './components/PresetButton';
+import { CircularTimeIndicator } from './components/CircularTimeIndicator';
+import { DayGraph } from './components/DayGraph';
 
 function App() {
   const { 
@@ -143,55 +145,103 @@ function App() {
                 </Tabs.List>
 
                 <Tabs.Panel value="overview" pt="xl">
-                  <Stack gap="xl">
-                    {/* Mode and Status */}
-                    <Group justify="space-between">
-                      <div>
-                        <Text size="xl" fw={500} style={{ color: 'rgba(255, 255, 255, 0.9)' }}>
-                          {state.temperature <= 3500 ? 'Night mode active' : 
-                           state.temperature <= 4500 ? 'Evening light' :
-                           'Daylight mode'}
-                        </Text>
-                        <Text size="xs" style={{ color: 'rgba(255, 255, 255, 0.5)' }}>
-                          Status: {connected ? 'Connected to wl-gammarelay' : 'Disconnected'}
-                        </Text>
-                      </div>
-                      <Switch
-                        checked={autoMode}
-                        onChange={(event) => setAutoMode(event.currentTarget.checked)}
-                        label="Auto Mode"
-                        size="md"
-                        styles={{
-                          track: {
-                            backgroundColor: autoMode ? 'rgba(255, 165, 0, 0.3)' : 'rgba(255, 255, 255, 0.1)',
-                            borderColor: autoMode ? 'rgba(255, 165, 0, 0.5)' : 'rgba(255, 255, 255, 0.2)',
-                          }
-                        }}
-                      />
-                    </Group>
+                  <Grid gutter="xl">
+                    <Grid.Col span={{ base: 12, md: 8 }}>
+                      <Stack gap="xl">
+                        {/* Mode and Status */}
+                        <Group justify="space-between">
+                          <div>
+                            <Text size="xl" fw={500} style={{ color: 'rgba(255, 255, 255, 0.9)' }}>
+                              {state.temperature <= 3500 ? 'Night mode active' : 
+                               state.temperature <= 4500 ? 'Evening light' :
+                               'Daylight mode'}
+                            </Text>
+                            <Text size="xs" style={{ color: 'rgba(255, 255, 255, 0.5)' }}>
+                              Status: {connected ? 'Connected to wl-gammarelay' : 'Disconnected'}
+                            </Text>
+                          </div>
+                          <Switch
+                            checked={autoMode}
+                            onChange={(event) => setAutoMode(event.currentTarget.checked)}
+                            label="Auto Mode"
+                            size="md"
+                            styles={{
+                              track: {
+                                backgroundColor: autoMode ? 'rgba(255, 165, 0, 0.3)' : 'rgba(255, 255, 255, 0.1)',
+                                borderColor: autoMode ? 'rgba(255, 165, 0, 0.5)' : 'rgba(255, 255, 255, 0.2)',
+                              }
+                            }}
+                          />
+                        </Group>
 
-                    <Divider style={{ borderColor: 'rgba(255, 255, 255, 0.1)' }} />
+                        <Divider style={{ borderColor: 'rgba(255, 255, 255, 0.1)' }} />
 
-                    {/* Preset Buttons */}
-                    <div>
-                      <Text size="sm" mb="sm" style={{ color: 'rgba(255, 255, 255, 0.7)' }}>
-                        Quick Presets
-                      </Text>
-                      <Group>
-                        {presets.map(preset => (
-                          <PresetButton key={preset.id} presetId={preset.id} />
-                        ))}
-                      </Group>
-                    </div>
+                        {/* 24-hour Graph */}
+                        <div>
+                          <Text size="sm" mb="md" style={{ color: 'rgba(255, 255, 255, 0.7)' }}>
+                            Daily Temperature & Brightness Schedule
+                          </Text>
+                          <DayGraph />
+                        </div>
 
-                    <Divider style={{ borderColor: 'rgba(255, 255, 255, 0.1)' }} />
+                        <Divider style={{ borderColor: 'rgba(255, 255, 255, 0.1)' }} />
 
-                    {/* Sliders */}
-                    <Stack gap="xl">
-                      <TemperatureSlider />
-                      <BrightnessSlider />
-                    </Stack>
-                  </Stack>
+                        {/* Preset Buttons */}
+                        <div>
+                          <Text size="sm" mb="sm" style={{ color: 'rgba(255, 255, 255, 0.7)' }}>
+                            Quick Presets
+                          </Text>
+                          <Group>
+                            {presets.map(preset => (
+                              <PresetButton key={preset.id} presetId={preset.id} />
+                            ))}
+                          </Group>
+                        </div>
+
+                        <Divider style={{ borderColor: 'rgba(255, 255, 255, 0.1)' }} />
+
+                        {/* Sliders */}
+                        <Stack gap="xl">
+                          <TemperatureSlider />
+                          <BrightnessSlider />
+                        </Stack>
+                      </Stack>
+                    </Grid.Col>
+                    
+                    <Grid.Col span={{ base: 12, md: 4 }}>
+                      <Stack gap="xl" align="center">
+                        {/* Time Indicator */}
+                        <div>
+                          <Text size="sm" mb="md" ta="center" style={{ color: 'rgba(255, 255, 255, 0.7)' }}>
+                            Current Time
+                          </Text>
+                          <CircularTimeIndicator />
+                        </div>
+                        
+                        {/* Sunrise/Sunset Info (placeholder for now) */}
+                        <div className="glass-card" style={{ padding: '1rem', width: '100%' }}>
+                          <Stack gap="xs">
+                            <Group justify="space-between">
+                              <Text size="sm" style={{ color: 'rgba(255, 255, 255, 0.7)' }}>
+                                Sunrise
+                              </Text>
+                              <Text size="sm" style={{ color: 'rgba(255, 255, 255, 0.9)' }}>
+                                06:45
+                              </Text>
+                            </Group>
+                            <Group justify="space-between">
+                              <Text size="sm" style={{ color: 'rgba(255, 255, 255, 0.7)' }}>
+                                Sunset
+                              </Text>
+                              <Text size="sm" style={{ color: 'rgba(255, 255, 255, 0.9)' }}>
+                                19:30
+                              </Text>
+                            </Group>
+                          </Stack>
+                        </div>
+                      </Stack>
+                    </Grid.Col>
+                  </Grid>
                 </Tabs.Panel>
 
                 <Tabs.Panel value="schedule" pt="xl">
