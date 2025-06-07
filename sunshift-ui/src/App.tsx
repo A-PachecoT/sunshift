@@ -6,6 +6,7 @@ import './styles/global.css';
 import { useEffect } from 'react';
 import { useGammaStore } from './stores/gammaStore';
 import { useUIStore } from './stores/uiStore';
+import { useTrayEvents } from './hooks/useTrayEvents';
 
 function App() {
   const { 
@@ -21,6 +22,9 @@ function App() {
     setActiveTab,
     currentTheme 
   } = useUIStore();
+  
+  // Initialize tray event listeners
+  useTrayEvents();
   
   // Fetch initial state on mount
   useEffect(() => {
