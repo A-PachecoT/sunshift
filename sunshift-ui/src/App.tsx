@@ -1,5 +1,5 @@
-import { MantineProvider, AppShell, Title, Text, Container, Tabs, Stack, Group, Badge, Alert } from '@mantine/core';
-import { IconSun, IconClock, IconSettings, IconAlertCircle } from '@tabler/icons-react';
+import { MantineProvider, AppShell, Title, Text, Container, Tabs, Stack, Group, Badge, Alert, Divider, Switch, Grid } from '@mantine/core';
+import { IconSun, IconClock, IconSettings, IconAlertCircle, IconMoon, IconBulb } from '@tabler/icons-react';
 import '@mantine/core/styles.css';
 import '@mantine/dates/styles.css';
 import './styles/global.css';
@@ -7,6 +7,9 @@ import { useEffect } from 'react';
 import { useGammaStore } from './stores/gammaStore';
 import { useUIStore } from './stores/uiStore';
 import { useTrayEvents } from './hooks/useTrayEvents';
+import { TemperatureSlider } from './components/TemperatureSlider';
+import { BrightnessSlider } from './components/BrightnessSlider';
+import { PresetButton } from './components/PresetButton';
 
 function App() {
   const { 
@@ -14,7 +17,10 @@ function App() {
     error, 
     loading, 
     connected,
-    fetchState 
+    fetchState,
+    autoMode,
+    setAutoMode,
+    presets 
   } = useGammaStore();
   
   const { 
@@ -91,6 +97,7 @@ function App() {
                   variant="light" 
                   color={connected ? "orange" : "red"} 
                   size="lg"
+                  leftSection={<IconSun size={14} />}
                 >
                   {loading ? 'Loading...' : `${state.temperature}K`}
                 </Badge>
@@ -98,6 +105,7 @@ function App() {
                   variant="light" 
                   color={connected ? "blue" : "red"} 
                   size="lg"
+                  leftSection={<IconBulb size={14} />}
                 >
                   {loading ? '...' : `${Math.round(state.brightness * 100)}%`}
                 </Badge>
@@ -135,30 +143,84 @@ function App() {
                 </Tabs.List>
 
                 <Tabs.Panel value="overview" pt="xl">
-                  <Stack gap="lg">
-                    <Text size="xl" fw={500} style={{ color: 'rgba(255, 255, 255, 0.9)' }}>
-                      {state.temperature <= 3500 ? 'Night mode active' : 
-                       state.temperature <= 4500 ? 'Evening light' :
-                       'Daylight mode'}
-                    </Text>
-                    <Text size="sm" style={{ color: 'rgba(255, 255, 255, 0.7)' }}>
-                      Color Temperature: {state.temperature}K
-                    </Text>
-                    <Text size="sm" style={{ color: 'rgba(255, 255, 255, 0.7)' }}>
-                      Screen Brightness: {Math.round(state.brightness * 100)}%
-                    </Text>
-                    <Text size="xs" style={{ color: 'rgba(255, 255, 255, 0.5)' }}>
-                      Status: {connected ? 'Connected' : 'Disconnected'}
-                    </Text>
+                  <Stack gap="xl">
+                    {/* Mode and Status */}
+                    <Group justify="space-between">
+                      <div>
+                        <Text size="xl" fw={500} style={{ color: 'rgba(255, 255, 255, 0.9)' }}>
+                          {state.temperature <= 3500 ? 'Night mode active' : 
+                           state.temperature <= 4500 ? 'Evening light' :
+                           'Daylight mode'}
+                        </Text>
+                        <Text size="xs" style={{ color: 'rgba(255, 255, 255, 0.5)' }}>
+                          Status: {connected ? 'Connected to wl-gammarelay' : 'Disconnected'}
+                        </Text>
+                      </div>
+                      <Switch
+                        checked={autoMode}
+                        onChange={(event) => setAutoMode(event.currentTarget.checked)}
+                        label="Auto Mode"
+                        size="md"
+                        styles={{
+                          track: {
+                            backgroundColor: autoMode ? 'rgba(255, 165, 0, 0.3)' : 'rgba(255, 255, 255, 0.1)',
+                            borderColor: autoMode ? 'rgba(255, 165, 0, 0.5)' : 'rgba(255, 255, 255, 0.2)',
+                          }
+                        }}
+                      />
+                    </Group>
+
+                    <Divider style={{ borderColor: 'rgba(255, 255, 255, 0.1)' }} />
+
+                    {/* Preset Buttons */}
+                    <div>
+                      <Text size="sm" mb="sm" style={{ color: 'rgba(255, 255, 255, 0.7)' }}>
+                        Quick Presets
+                      </Text>
+                      <Group>
+                        {presets.map(preset => (
+                          <PresetButton key={preset.id} presetId={preset.id} />
+                        ))}
+                      </Group>
+                    </div>
+
+                    <Divider style={{ borderColor: 'rgba(255, 255, 255, 0.1)' }} />
+
+                    {/* Sliders */}
+                    <Stack gap="xl">
+                      <TemperatureSlider />
+                      <BrightnessSlider />
+                    </Stack>
                   </Stack>
                 </Tabs.Panel>
 
                 <Tabs.Panel value="schedule" pt="xl">
-                  <Text style={{ color: 'rgba(255, 255, 255, 0.9)' }}>Schedule configuration coming soon...</Text>
+                  <Grid>
+                    <Grid.Col span={12}>
+                      <Stack>
+                        <Group gap="xs">
+                          <IconMoon size={20} style={{ color: 'rgba(255, 255, 255, 0.7)' }} />
+                          <Text style={{ color: 'rgba(255, 255, 255, 0.9)' }}>
+                            Schedule configuration coming soon...
+                          </Text>
+                        </Group>
+                        <Text size="sm" style={{ color: 'rgba(255, 255, 255, 0.6)' }}>
+                          Set up automatic temperature and brightness changes based on time of day.
+                        </Text>
+                      </Stack>
+                    </Grid.Col>
+                  </Grid>
                 </Tabs.Panel>
 
                 <Tabs.Panel value="settings" pt="xl">
-                  <Text style={{ color: 'rgba(255, 255, 255, 0.9)' }}>Settings coming soon...</Text>
+                  <Stack gap="lg">
+                    <Text style={{ color: 'rgba(255, 255, 255, 0.9)' }}>
+                      Settings coming soon...
+                    </Text>
+                    <Text size="sm" style={{ color: 'rgba(255, 255, 255, 0.6)' }}>
+                      Configure startup behavior, keyboard shortcuts, and more.
+                    </Text>
+                  </Stack>
                 </Tabs.Panel>
               </Tabs>
             </div>
