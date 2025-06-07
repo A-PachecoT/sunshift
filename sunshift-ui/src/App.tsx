@@ -3,12 +3,35 @@ import { IconSun, IconClock, IconSettings, IconAlertCircle } from '@tabler/icons
 import '@mantine/core/styles.css';
 import '@mantine/dates/styles.css';
 import './styles/global.css';
-import { useState } from 'react';
-import { useGammaRelay } from './hooks/useGammaRelay';
+import { useEffect } from 'react';
+import { useGammaStore } from './stores/gammaStore';
+import { useUIStore } from './stores/uiStore';
 
 function App() {
-  const [activeTab, setActiveTab] = useState<string | null>('overview');
-  const { state, error, loading } = useGammaRelay();
+  const { 
+    state, 
+    error, 
+    loading, 
+    connected,
+    fetchState 
+  } = useGammaStore();
+  
+  const { 
+    activeTab, 
+    setActiveTab,
+    currentTheme 
+  } = useUIStore();
+  
+  // Fetch initial state on mount
+  useEffect(() => {
+    fetchState();
+  }, [fetchState]);
+  
+  // Auto-refresh every 30 seconds
+  useEffect(() => {
+    const interval = setInterval(fetchState, 30000);
+    return () => clearInterval(interval);
+  }, [fetchState]);
   
   // Determine background class based on temperature
   const getBackgroundClass = () => {
@@ -19,7 +42,7 @@ function App() {
 
   return (
     <MantineProvider 
-      defaultColorScheme="dark"
+      defaultColorScheme={currentTheme}
       theme={{
         colors: {
           dark: [
@@ -60,10 +83,18 @@ function App() {
                 <Title order={2} style={{ color: 'rgba(255, 255, 255, 0.9)' }}>Sunshift</Title>
               </Group>
               <Group>
-                <Badge variant="light" color="orange" size="lg">
+                <Badge 
+                  variant="light" 
+                  color={connected ? "orange" : "red"} 
+                  size="lg"
+                >
                   {loading ? 'Loading...' : `${state.temperature}K`}
                 </Badge>
-                <Badge variant="light" color="blue" size="lg">
+                <Badge 
+                  variant="light" 
+                  color={connected ? "blue" : "red"} 
+                  size="lg"
+                >
                   {loading ? '...' : `${Math.round(state.brightness * 100)}%`}
                 </Badge>
               </Group>
@@ -86,7 +117,7 @@ function App() {
             )}
             
             <div className="glass-card" style={{ padding: '2rem', marginTop: '2rem' }}>
-              <Tabs value={activeTab} onChange={setActiveTab}>
+              <Tabs value={activeTab} onChange={(value) => setActiveTab(value as any)}>
                 <Tabs.List>
                   <Tabs.Tab value="overview" leftSection={<IconSun size={16} />}>
                     Overview
@@ -111,6 +142,9 @@ function App() {
                     </Text>
                     <Text size="sm" style={{ color: 'rgba(255, 255, 255, 0.7)' }}>
                       Screen Brightness: {Math.round(state.brightness * 100)}%
+                    </Text>
+                    <Text size="xs" style={{ color: 'rgba(255, 255, 255, 0.5)' }}>
+                      Status: {connected ? 'Connected' : 'Disconnected'}
                     </Text>
                   </Stack>
                 </Tabs.Panel>
