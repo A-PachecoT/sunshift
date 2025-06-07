@@ -1,0 +1,91 @@
+/* Global styles for Sunshift */
+:root {
+  --color-warm-start: #ffeaa7;
+  --color-warm-mid: #fab1a0;
+  --color-warm-end: #ff7675;
+  --color-cool-start: #74b9ff;
+  --color-cool-mid: #a29bfe;
+  --color-cool-end: #6c5ce7;
+  --color-night: #2d3436;
+  --color-day: #dfe6e9;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+  overflow: hidden;
+  user-select: none;
+}
+
+/* Animated gradient background that changes with temperature */
+.gradient-background {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(135deg, var(--color-warm-start) 0%, var(--color-warm-mid) 50%, var(--color-warm-end) 100%);
+  transition: all 1s ease-in-out;
+  z-index: -1;
+}
+
+.gradient-background.cool {
+  background: linear-gradient(135deg, var(--color-cool-start) 0%, var(--color-cool-mid) 50%, var(--color-cool-end) 100%);
+}
+
+.gradient-background.night {
+  background: linear-gradient(135deg, #2d3436 0%, #636e72 100%);
+}
+
+/* Glass morphism effect for cards */
+.glass-card {
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(10px);
+  border-radius: 20px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
+}
+
+/* Temperature slider styles */
+.temp-slider {
+  position: relative;
+  width: 100%;
+  height: 40px;
+  background: linear-gradient(to right, 
+    hsl(0, 70%, 60%) 0%, 
+    hsl(30, 80%, 65%) 20%, 
+    hsl(60, 70%, 70%) 40%, 
+    hsl(200, 60%, 70%) 60%, 
+    hsl(220, 70%, 65%) 100%);
+  border-radius: 20px;
+  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.3);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.5);
+}
+
+/* Smooth transitions */
+.smooth-transition {
+  transition: all 0.3s ease-in-out;
+} 

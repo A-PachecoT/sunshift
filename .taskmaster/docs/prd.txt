@@ -1,0 +1,122 @@
+SUNSHIFT UI - PRODUCT REQUIREMENTS DOCUMENT
+
+PROJECT OVERVIEW
+Sunshift is a modern GUI application for controlling and personalizing wl-gammarelay color temperature and brightness settings on Wayland Linux systems. The application provides an intuitive interface for managing blue light filtering with time-based automation and manual controls.
+
+TECHNOLOGY STACK
+- Framework: Tauri 2.0 (Rust backend + React frontend)
+- Frontend: React 18 with TypeScript
+- UI Library: Mantine UI (modern React components)
+- State Management: Zustand
+- Build Tool: Vite
+- Styling: CSS Modules with Mantine theming
+- Charts: Recharts for temperature/brightness graphs
+- DBus Communication: Rust zbus crate for backend
+- Date/Time: date-fns
+
+CORE FEATURES
+
+1. SYSTEM TRAY INTEGRATION
+- Tray icon that changes color based on current temperature
+- Left-click opens quick control popup
+- Right-click shows context menu with presets
+- Tooltip displays current temperature and brightness
+
+2. MAIN WINDOW UI
+- Modern, clean interface following Fluent Design principles
+- Header with app branding and minimize/close buttons
+- Tab-based navigation: Overview, Schedule, Settings
+
+3. OVERVIEW TAB
+- Large circular progress indicator showing time of day
+- Current temperature and brightness display with live values
+- 24-hour graph visualization showing:
+  - Temperature curve throughout the day
+  - Brightness curve throughout the day
+  - Current time position marker
+  - Sunrise/sunset markers
+- Quick adjustment sliders for immediate control
+- Status text showing current period (Day/Evening/Night)
+
+4. SCHEDULE TAB
+- Visual time picker for setting transition points
+- Separate controls for temperature and brightness schedules
+- Day/Evening/Night period configuration
+- Transition duration settings
+- Preview graph showing changes in real-time
+
+5. SETTINGS TAB
+- Enable/disable automatic adjustments toggle
+- Temperature range configuration (min/max Kelvin)
+- Brightness range configuration (min/max percentage)
+- Sunrise/sunset time configuration
+- Keyboard shortcut customization
+- Start with system toggle
+
+6. QUICK CONTROL POPUP
+- Compact floating window (300x400px)
+- Temperature slider with gradient background
+- Brightness slider
+- Preset buttons: Day, Evening, Night, Reading
+- "Disable for 1 hour" button
+- Close on focus loss
+
+7. DBUS INTEGRATION
+- Read current values from wl-gammarelay
+- Set temperature and brightness values
+- Monitor for external changes
+- Sync with shell scripts
+
+8. PRESET SYSTEM
+- Built-in presets: Day, Evening, Night, Reading, Movie
+- Each preset stores temperature and brightness
+- Quick access from tray and main UI
+- Visual preview when hovering presets
+
+9. REAL-TIME UPDATES
+- Live temperature/brightness value updates
+- Graph position marker updates every minute
+- Smooth transitions when values change
+- Status notifications for manual overrides
+
+10. DATA PERSISTENCE
+- Save user preferences to config file
+- Remember window position and size
+- Restore last manual values
+- Export/import settings
+
+UI/UX REQUIREMENTS
+- Responsive design that works on different screen sizes
+- Smooth animations and transitions
+- Keyboard navigation support
+- Accessibility with proper ARIA labels
+- Dark theme that respects current temperature
+- Localization support (initially English only)
+
+TECHNICAL REQUIREMENTS
+- Low memory footprint (<50MB)
+- Fast startup time (<1 second)
+- No polling - event-driven updates
+- Cross-platform config paths
+- Graceful handling of wl-gammarelay disconnection
+- Automatic reconnection to DBus
+
+FILE STRUCTURE
+- src-tauri/ - Rust backend code
+- src/ - React frontend code
+- src/components/ - React components
+- src/hooks/ - Custom React hooks
+- src/stores/ - Zustand stores
+- src/utils/ - Utility functions
+- public/ - Static assets
+- scripts/ - Existing shell scripts
+
+DELIVERABLES
+- Tauri desktop application
+- System tray integration
+- DBus communication with wl-gammarelay
+- Modern React-based UI
+- Real-time graph visualization
+- Preset management system
+- Settings persistence
+- Installation script updates 
