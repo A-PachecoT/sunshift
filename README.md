@@ -16,7 +16,13 @@ Automatic color temperature and brightness adjustment for Wayland compositors us
 ./setup.sh
 ```
 
-This installs wl-gammarelay, configures Sunshift scripts, and enables automatic adjustments.
+This fully automates the installation:
+- Installs wl-gammarelay from AUR 
+- Copies all scripts including Waybar widget
+- Sets up systemd timer for automatic adjustments
+- Configures proper permissions and paths
+
+**Everything is automated** - no manual configuration required for core functionality!
 
 ## ⌨️ Keyboard Shortcuts
 
@@ -26,6 +32,31 @@ This installs wl-gammarelay, configures Sunshift scripts, and enables automatic 
 | `Super + PageDown` | Warmer temperature (-500K) |
 | `Alt + PageUp` | Brighter (+10%) |
 | `Alt + PageDown` | Dimmer (-10%) |
+
+## 📊 Status Bar Widget
+
+Sunshift includes a Waybar widget for live temperature and brightness display in your status bar.
+
+**Automated Setup:**
+1. Run `./setup.sh` - automatically installs widget script
+2. Add to your `~/.config/waybar/config.json`:
+   ```json
+   "custom/sunshift": {
+       "exec": "~/.config/hypr/scripts/sunshift-widget.sh",
+       "interval": 30,
+       "return-type": "json",
+       "format": "{}",
+       "on-click": "pkill -f sunshift-ui || sunshift-ui",
+       "on-click-right": "~/.config/hypr/scripts/temp-up.sh",
+       "on-click-middle": "~/.config/hypr/scripts/brightness-up.sh"
+   }
+   ```
+3. Add widget styling from `waybar-sunshift-style.css` to your `style.css`
+4. Restart Waybar: `pkill waybar && waybar &`
+
+The widget displays: `☀️ 6500K ☀️ 100%` with temperature-based colors and click actions.
+
+See [[WAYBAR_WIDGET.md]] for complete setup and customization guide.
 
 ## ⚙️ Configuration
 
@@ -102,6 +133,7 @@ See [[DEVELOPER.md#troubleshooting]] for detailed solutions.
 ## 📚 Documentation
 
 - [[DEVELOPER.md]] - Technical details, customization, architecture
+- [[WAYBAR_WIDGET.md]] - Status bar widget setup and customization
 - [[setup.sh]] - Installation script source
 - [[smooth-temperature.sh]] - Main automation script
 

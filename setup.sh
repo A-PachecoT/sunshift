@@ -65,8 +65,8 @@ mkdir -p ~/.config/systemd/user
 
 # Copy scripts
 print_info "Installing scripts..."
-cp {temp-up.sh,temp-down.sh,brightness-up.sh,brightness-down.sh,auto-temperature.sh,auto-brightness.sh,smooth-temperature.sh} ~/.config/hypr/scripts/
-chmod +x ~/.config/hypr/scripts/{temp-up.sh,temp-down.sh,brightness-up.sh,brightness-down.sh,auto-temperature.sh,auto-brightness.sh,smooth-temperature.sh}
+cp {temp-up.sh,temp-down.sh,brightness-up.sh,brightness-down.sh,auto-temperature.sh,auto-brightness.sh,smooth-temperature.sh,sunshift-widget.sh} ~/.config/hypr/scripts/
+chmod +x ~/.config/hypr/scripts/{temp-up.sh,temp-down.sh,brightness-up.sh,brightness-down.sh,auto-temperature.sh,auto-brightness.sh,smooth-temperature.sh,sunshift-widget.sh}
 
 # Update systemd service file with correct path
 print_info "Installing systemd services..."
